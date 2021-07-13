@@ -8,14 +8,16 @@ const T = new Twit({
     access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
-
-const stream = T.stream = T.stream('statuses/filter', {track: '#BlackTechTwitter'});
-
-
-function responseCallback (err, data, response) {
-    console.log(err);
-}
-
-stream.on('tweet', tweet => {
-    T.post('statuses/retweet/:id', {id: tweet.id_str}, responseCallback);
+var stream = T.stream('statuses/filter', { track: '#BlackTechTwitter' })
+ 
+stream.on('tweet', (tweet) => {
+    T.post('https://api.twitter.com/1.1/statuses/retweet/:id.json', { id: tweet.id_str }, function(err, data, response) {
+            if(err){
+                console.log("Something went wrong. Here is the error ", err)
+            } else {
+                console.log("Success!")
+            }
+          })
 })
+
+console.log("The bot is running")
