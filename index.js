@@ -12,6 +12,7 @@ var stream = T.stream("statuses/filter", { track: "#BlackTechTwitter" });
 
 var alreadyRetweeted = [];
 
+
 stream.on("tweet", (tweet) => {
   if (!alreadyRetweeted.includes(tweet.id_str)) {
       if(alreadyRetweeted.length == 5){
