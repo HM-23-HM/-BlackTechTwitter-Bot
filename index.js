@@ -8,19 +8,18 @@ const T = new Twit({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 });
 
-var delayBetweenSearches = 7 * 60 * 1000
-
+var delayBetweenSearches = 30 * 60 * 1000
 
 function retweet(idOfTweet){
      T.post(
         "https://api.twitter.com/1.1/statuses/retweet/:id.json",
         { id: idOfTweet },
-        (err, data, response) => {
+        (err, tweetData, response) => {
           if (err) {
             console.log("There was an error retweeting this");
             return;
           } else {
-            console.log("Success!");
+            console.log("Success! ID of tweet is: ", idOfTweet);
             return;
           }
         }
@@ -30,12 +29,10 @@ function retweet(idOfTweet){
 function collectTweets() {
 
   let current = Date.now();
-  let numOfMinutesBeforeCurrent = 5;
+  let numOfMinutesBeforeCurrent = 10;
   let numOfMillisecBeforeCUrrent = current - (numOfMinutesBeforeCurrent * 60 * 1000);
 
   let startTimeISO = new Date(numOfMillisecBeforeCUrrent);
-
-  var delayBetweenRetweets = 0 * 60 * 1000
 
   let searchParams = {
     query: "#BlackTechTwitter",
@@ -47,20 +44,26 @@ function collectTweets() {
   T.get(
     "https://api.twitter.com/2/tweets/search/recent",
     searchParams,
-    (err, data, response) => {
+    (err, tweetData, response) => {
       if (err) {
         console.log("Error getting tweets");
       } else {
         let listOfIDs = [];
-        data.data.forEach((element) => listOfIDs.push(element.id));
-        for(let i=0; i <= 2 ;i++){
-            setTimeout(() => {retweet(listOfIDs[i])}, delayBetweenRetweets)
+        let alreadyRetweeted = {};
+        tweetData.data.forEach((element) => listOfIDs.push(element.id));
+        console.log(listOfIDs)
+        for(let i = 0; i <= 2 ; i++){
+               if(alreadyRetweeted[listOfIDs[i]] != true){
+                 alreadyRetweeted[listOfIDs[i]] = true
+                 retweet(listOfIDs[i])
+               } else {
+                 console.log("Old Tweet")
+               }
         }
       }
     }
   );
 
-  // console.log("The bot is running");
 }
 
 console.log("Up and Running")
