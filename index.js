@@ -10,6 +10,7 @@ const T = new Twit({
 
 var delayBetweenSearches = 7 * 60 * 1000
 
+
 function retweet(idOfTweet){
      T.post(
         "https://api.twitter.com/1.1/statuses/retweet/:id.json",
