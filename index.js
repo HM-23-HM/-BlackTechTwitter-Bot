@@ -26,6 +26,7 @@ function retweet(idOfTweet){
       )
 }
 
+
 function collectTweets() {
 
   let current = Date.now();
