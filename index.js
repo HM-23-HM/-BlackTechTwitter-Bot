@@ -8,7 +8,8 @@ const T = new Twit({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 });
 
-var delayBetweenSearches = 30 * 60 * 1000
+//60 mins x 60 secs/min x 1000ms/sec
+var delayBetweenSearches = 60 * 60 * 1000
 
 function retweet(idOfTweet){
      T.post(
