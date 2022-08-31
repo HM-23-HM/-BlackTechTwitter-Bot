@@ -15,23 +15,20 @@ function retweet(idOfTweet){
      T.post(
         "https://api.twitter.com/1.1/statuses/retweet/:id.json",
         { id: idOfTweet },
-        (err, tweetData, response) => {
+        (err) => {
           if (err) {
             console.log("There was an error retweeting this");
-            return;
           } else {
-            console.log("Success! ID of tweet is: ", idOfTweet);
-            return;
+            console.log("Successfully retweeted: ", idOfTweet);
           }
         }
       )
 }
 
-
-function collectTweets() {
+function getTweets() {
 
   let current = Date.now();
-  let numOfMinutesBeforeCurrent = 10;
+  let numOfMinutesBeforeCurrent = 30;
   let numOfMillisecBeforeCUrrent = current - (numOfMinutesBeforeCurrent * 60 * 1000);
 
   let startTimeISO = new Date(numOfMillisecBeforeCUrrent);
@@ -48,20 +45,12 @@ function collectTweets() {
     searchParams,
     (err, tweetData, response) => {
       if (err) {
+        console.log({response})
         console.log("Error getting tweets");
       } else {
-        let listOfIDs = [];
-        let alreadyRetweeted = {};
-        tweetData.data.forEach((element) => listOfIDs.push(element.id));
-        console.log(listOfIDs)
-        for(let i = 0; i <= 2 ; i++){
-               if(alreadyRetweeted[listOfIDs[i]] != true){
-                 alreadyRetweeted[listOfIDs[i]] = true
-                 retweet(listOfIDs[i])
-               } else {
-                 console.log("Old Tweet")
-               }
-        }
+        console.log({response})
+        const tweets = new Set(tweetData.data.map(tweet => tweet.id));
+        tweets.forEach(tweet => retweet(tweet))
       }
     }
   );
@@ -69,5 +58,5 @@ function collectTweets() {
 }
 
 console.log("Up and Running")
-collectTweets()
-setInterval(collectTweets, delayBetweenSearches)
+getTweets()
+setInterval(getTweets, delayBetweenSearches)
