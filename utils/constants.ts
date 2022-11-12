@@ -1,4 +1,5 @@
 export const hashtagLimit = 4;
+export const atLimit = 3;
 export const searchParamsMaxResults = 100;
 export const operationIntervalMins = 30;
 

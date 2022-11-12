@@ -1,11 +1,13 @@
-import { hashtagLimit } from "./constants";
+import { atLimit, hashtagLimit } from "./constants";
 import { TweetData } from "./types";
 import T from "./twit";
 
 const isSpam = (tweetText: string) => {
     const hashtagPattern = /#/g;
+    const atTagPattern = /@/g;
     const numHashtags = tweetText.match(hashtagPattern);
-    if(numHashtags?.length > hashtagLimit) return true;
+    const numAtTags = tweetText.match(atTagPattern);
+    if(numHashtags?.length > hashtagLimit || numAtTags?.length > atLimit) return true;
     return false;
 }
 
