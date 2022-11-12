@@ -3,7 +3,7 @@ require("dotenv").config();
 import T from "./utils/twit";
 import { TweetCompoundData, TweetData } from "./utils/types";
 import { operationIntervalMs, searchParamsMaxResults, operationIntervalMins } from "./utils/constants";
-import { getTweetIds, removeRetweets, removeSpam, retweetTweets } from "./utils";
+import { logSpamPercentage, getTweetIds, removeRetweets, removeSpam, retweetTweets } from "./utils";
 
 const run = async () => {
   getTweetData();
@@ -31,8 +31,11 @@ const getTweetData = () => {
         console.error("Error getting tweets at: ", Date.now().toLocaleString());
         console.error(err);
       } else {
-        let tweetData = removeSpam(compoundData.data);
-        tweetData = removeRetweets(tweetData);
+        let tweetData = removeRetweets(compoundData.data);
+        const totalCount = tweetData.length;
+        tweetData = removeSpam(tweetData);
+        const spamFreeCount = tweetData.length;
+        logSpamPercentage(totalCount, spamFreeCount);
         let tweetIds = getTweetIds(tweetData);
         retweetTweets(tweetIds);
       }
