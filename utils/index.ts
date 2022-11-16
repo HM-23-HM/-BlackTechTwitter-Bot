@@ -3,8 +3,8 @@ import { TweetData } from "./types";
 import T from "./twit";
 
 const isSpam = (tweetText: string) => {
-    const hashtagPattern = /#/g;
-    const atTagPattern = /@/g;
+    const hashtagPattern = new RegExp(/#/, "g");
+    const atTagPattern = new RegExp(/@/, "g");
     const numHashtags = tweetText.match(hashtagPattern);
     const numAtTags = tweetText.match(atTagPattern);
     if(numHashtags?.length > hashtagLimit || numAtTags?.length > atLimit) return true;
@@ -12,7 +12,7 @@ const isSpam = (tweetText: string) => {
 }
 
 const isRetweet = (tweetText: string) => {
-    const retweetPattern = /^(RT)/g;
+    const retweetPattern = new RegExp(/^(RT)/, "g");
     return retweetPattern.test(tweetText);
 }
 
