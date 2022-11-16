@@ -43,9 +43,14 @@ const getTweetData = () => {
         let tweetData = removeRetweets(compoundData.data);
         const totalCount = tweetData.length;
         tweetData = removeSpam(tweetData);
+        // temp
+        const sampleTweets = tweetData.slice(-3);
+        sampleTweets.forEach(tweet => console.log("Valid text: ", tweet.text))
+        // end temp
         const spamFreeCount = tweetData.length;
         logSpamPercentage(totalCount, spamFreeCount);
         let tweetIds = getTweetIds(tweetData).slice(-numTweets);
+
         retweetTweets(tweetIds);
       }
     }
