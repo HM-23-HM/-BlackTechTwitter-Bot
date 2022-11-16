@@ -1,48 +1,16 @@
 require("dotenv").config();
+const express = require("express");
+const app = express();
+const port = process.env.PORT;
 
-import T from "./utils/twit";
-import { TweetCompoundData, TweetData } from "./utils/types";
-import { operationIntervalMs, searchParamsMaxResults, operationIntervalMins } from "./utils/constants";
-import { logSpamPercentage, getTweetIds, removeRetweets, removeSpam, retweetTweets } from "./utils";
+import MainService from "./services/MainService";
 
-const run = async () => {
-  getTweetData();
-};
+app.get("/", (req, res) => {
+    MainService.run();
+})
 
-const getTweetData = () => {
+app.listen(port, () => {
+  console.log("Server is ready to go")
+})
 
-  const current = Date.now();
-  const numOfMillisecBeforeCUrrent =
-    current - (operationIntervalMins * 60 * 1000);
 
-  const startTimeISO = new Date(numOfMillisecBeforeCUrrent);
-
-  const searchParams = {
-    query: "#BlackTechTwitter",
-    max_results: searchParamsMaxResults,
-    start_time: startTimeISO,
-  };
-
-  T.get(
-    "https://api.twitter.com/2/tweets/search/recent",
-    searchParams,
-    (err, compoundData: TweetCompoundData, response) => {
-      if (err) {
-        console.error("Error getting tweets at: ", Date.now().toLocaleString());
-        console.error(err);
-      } else {
-        let tweetData = removeRetweets(compoundData.data);
-        const totalCount = tweetData.length;
-        tweetData = removeSpam(tweetData);
-        const spamFreeCount = tweetData.length;
-        logSpamPercentage(totalCount, spamFreeCount);
-        let tweetIds = getTweetIds(tweetData);
-        retweetTweets(tweetIds);
-      }
-    }
-  );
-};
-
-console.log("Up and Running");
-run();
-setInterval(run, operationIntervalMs);
