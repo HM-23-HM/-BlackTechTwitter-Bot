@@ -6,6 +6,9 @@ const port = process.env.PORT;
 import MainService from "./services/MainService";
 
 app.get("/", (req, res) => {
+    res.json({
+      message: "You got me"
+    })
     MainService.run();
 })
 
