@@ -32,29 +32,29 @@ const getTweetData = () => {
     start_time: startTimeISO,
   };
 
-  T.get(
-    "https://api.twitter.com/2/tweets/search/recent",
-    searchParams,
-    (err, compoundData: TweetCompoundData, response) => {
-      if (err) {
-        console.error("Error getting tweets at: ", Date.now().toLocaleString());
-        console.error(err);
-      } else {
-        let tweetData = removeRetweets(compoundData.data);
-        const totalCount = tweetData.length;
-        tweetData = removeSpam(tweetData);
-        // temp
-        const sampleTweets = tweetData.slice(-3);
-        sampleTweets.forEach(tweet => console.log("Valid text: ", tweet.text))
-        // end temp
-        const spamFreeCount = tweetData.length;
-        logSpamPercentage(totalCount, spamFreeCount);
-        let tweetIds = getTweetIds(tweetData).slice(-numTweets);
+//   T.get(
+//     "https://api.twitter.com/2/tweets/search/recent",
+//     searchParams,
+//     (err, compoundData: TweetCompoundData, response) => {
+//       if (err) {
+//         console.error("Error getting tweets at: ", Date.now().toLocaleString());
+//         console.error(err);
+//       } else {
+//         let tweetData = removeRetweets(compoundData.data);
+//         const totalCount = tweetData.length;
+//         tweetData = removeSpam(tweetData);
+//         // temp
+//         const sampleTweets = tweetData.slice(-3);
+//         sampleTweets.forEach(tweet => console.log("Valid text: ", tweet.text))
+//         // end temp
+//         const spamFreeCount = tweetData.length;
+//         logSpamPercentage(totalCount, spamFreeCount);
+//         let tweetIds = getTweetIds(tweetData).slice(-numTweets);
 
-        retweetTweets(tweetIds);
-      }
-    }
-  );
+//         // retweetTweets(tweetIds);
+//       }
+//     }
+//   );
 };
 
 let instance;
