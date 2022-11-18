@@ -1,6 +1,6 @@
 export const hashtagLimit = 4;
 export const atLimit = 3;
-export const searchParamsMaxResults = 100;
+export const searchParamsMaxResults = 30;
 export const operationIntervalMins = 30;
 export const numTweets = 3;
 
