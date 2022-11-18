@@ -17,35 +17,43 @@ const isRetweet = (tweetText: string) => {
 }
 
 export const removeSpam = (tweetData: TweetData[]) => {
-    return tweetData.filter(datum => !isSpam(datum.text))
+    return tweetData?.filter(datum => !isSpam(datum.text))
 }
 
 export const removeRetweets = (tweetData: TweetData[]) => {
-    return tweetData.filter(datum => !isRetweet(datum.text))
+    return tweetData?.filter(datum => !isRetweet(datum.text))
 }
 
 export const getTweetIds = (tweetData: TweetData[]) => {
-    return tweetData.map(datum => datum.id);
+    return tweetData?.map(datum => datum.id);
 }
 
 export const retweetTweets = (tweetIds: string[]) => {
-    tweetIds.forEach(id => retweet(id));
+    tweetIds?.forEach(id => retweet(id));
 }
 
-const retweet = (tweetId: string) => {
-    T.post(
-      "https://api.twitter.com/1.1/statuses/retweet/:id.json",
-      { id: tweetId },
-      (err) => {
-        if (err) {
-          console.error("An error occured while retweeting the following tweet: ", tweetId);
-          console.error(err);
-        }
-      }
-    );
+const retweet = (tweetId?: string) => {
+    if(tweetId){
+        T.post(
+            "https://api.twitter.com/1.1/statuses/retweet/:id.json",
+            { id: tweetId },
+            (err) => {
+              if (err) {
+                console.error("An error occured while retweeting the following tweet: ", tweetId);
+                console.error(err);
+              }
+            }
+          );
+    }
   };
 
 export const logSpamPercentage = (totalCount: number, spamFreeCount: number) => {
     const percentage = Math.round((1 - (spamFreeCount/totalCount)) * 100);
     console.log(`For a batch of ${totalCount} tweets, the spam percentage is: ${percentage}% `)
+}
+
+export const getBatchToRetweet = (tweetData: TweetData[], batchSize: number) => {
+    const batch = tweetData?.slice(-batchSize);
+    console.log({batch})
+    return batch;
 }
