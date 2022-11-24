@@ -16,6 +16,7 @@ const isRetweet = (tweetText: string) => {
     return retweetPattern.test(tweetText);
 }
 
+
 export const removeSpam = (tweetData: TweetData[]) => {
     return tweetData?.filter(datum => !isSpam(datum.text))
 }

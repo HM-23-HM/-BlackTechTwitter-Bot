@@ -62,7 +62,6 @@ class MainService {
           console.error("Error getting tweets at: ", Date.now().toLocaleString());
           console.error(err);
         } else {
-            console.log({this: this})
             if(compoundData.data.length > 0){
                 console.log("Count 1 - Raw: ", compoundData.data.length)
                 let tweetData = removeRetweets(compoundData.data);
