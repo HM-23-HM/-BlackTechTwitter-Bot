@@ -9,11 +9,14 @@ app.get("/", (req, res) => {
     res.json({
       message: "You got me"
     })
-    MainService.run();
+    // MainService.run();
 })
 
 app.listen(port, () => {
   console.log("Server is ready to go")
 })
+
+MainService.run();
+
 
 
