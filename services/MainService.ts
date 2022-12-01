@@ -33,15 +33,15 @@ class MainService {
   public run() {
     if(!this.init){
         console.log("Up and Running");
-        this.getTweetData();
-        setInterval(this.getTweetData.bind(this), operationIntervalMs);
+        this.tweet();
+        setInterval(this.tweet.bind(this), operationIntervalMs);
         this.init = true;
     } else {
         console.log("Service has already been initialized")
     }
   }
 
-  private getTweetData(service?: MainService) {
+  public tweet() {
     const current = Date.now();
     const numOfMillisecBeforeCUrrent =
       current - operationIntervalMins * 60 * 1000;
