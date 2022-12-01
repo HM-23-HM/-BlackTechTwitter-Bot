@@ -48,9 +48,9 @@ const retweet = (tweetId?: string) => {
     }
   };
 
-export const logSpamPercentage = (totalCount: number, spamFreeCount: number) => {
+export const getSpamPercentage = (totalCount: number, spamFreeCount: number) => {
     const percentage = Math.round((1 - (spamFreeCount/totalCount)) * 100);
-    console.log(`For a batch of ${totalCount} tweets, the spam percentage is: ${percentage}% `)
+    return `For a batch of ${totalCount} tweets, the spam percentage is: ${percentage}% `
 }
 
 export const getBatchToRetweet = (tweetData: TweetData[], batchSize: number) => {

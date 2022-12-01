@@ -1,13 +1,12 @@
 import {
     getBatchToRetweet,
   getTweetIds,
-  logSpamPercentage,
+  getSpamPercentage as getSpamReport,
   removeRetweets,
   removeSpam,
   retweetTweets,
 } from "../utils";
 import {
-    numTweets,
   operationIntervalMins,
   operationIntervalMs,
   searchParamsMaxResults,
@@ -21,8 +20,6 @@ let instance: MainService;
 class MainService {
 
    private init = false;
-   private prevTweetedIds: string[] = [];
-   private prevTweetThreshold = 10;
 
   constructor() {
     if(!instance){
@@ -33,15 +30,16 @@ class MainService {
   public run() {
     if(!this.init){
         console.log("Up and Running");
-        this.tweet();
-        setInterval(this.tweet.bind(this), operationIntervalMs);
+        this.tweetBatch();
+        setInterval(this.tweetBatch.bind(this), operationIntervalMs);
         this.init = true;
     } else {
         console.log("Service has already been initialized")
     }
   }
 
-  public tweet() {
+  public async tweetBatch() {
+    console.log("Up and Running")
     const current = Date.now();
     const numOfMillisecBeforeCUrrent =
       current - operationIntervalMins * 60 * 1000;
@@ -54,62 +52,45 @@ class MainService {
       start_time: startTimeISO,
     };
 
-    T.get(
+
+    const stats = await T.get(
       "https://api.twitter.com/2/tweets/search/recent",
-      searchParams,
-      (err, compoundData: TweetCompoundData, response) => {
-        if (err) {
-          console.error("Error getting tweets at: ", Date.now().toLocaleString());
-          console.error(err);
-        } else {
+      searchParams
+    ).then(
+      (response: { data: TweetCompoundData, res: any }) => {
+        const compoundData = response.data;
             if(compoundData.data.length > 0){
-                console.log("Count 1 - Raw: ", compoundData.data.length)
+                const stats = {};
+
+                stats["Count 1 - Raw"] = compoundData.data.length;
+
                 let tweetData = removeRetweets(compoundData.data);
-                console.log("Count 2 - Retweets have been removed: ", tweetData.length)
-                tweetData = this.removePreviouslyTweeted(tweetData);
-                console.log("Count 3 - Prev tweeted have been removed: ", tweetData.length)
-      
+                stats["Count 2 - Retweets have been removed"] = tweetData.length;
+
                 const totalCount = tweetData.length;
                 tweetData = removeSpam(tweetData);
-                console.log("Count 4 - Spam has been removed: ", tweetData.length)
+                stats["Count 3 - Spam has been removed"] = tweetData.length;
+
                 const spamFreeCount = tweetData.length;
         
                 const batch = getBatchToRetweet(tweetData, 3);
-                console.log("Count 5 - Batch size: ", batch.length);
-                logSpamPercentage(totalCount, spamFreeCount);
+                stats["Count 4 - Batch size"] = batch.length;
+
+                stats["Spam report"] = getSpamReport(totalCount, spamFreeCount);
+
                 let tweetIds = getTweetIds(batch);
-                console.log({tweetIds, previousIds: this.prevTweetedIds})
         
                 retweetTweets(tweetIds);
-                this.addToPreviouslyTweetedIds(tweetIds);
-                console.log({newPreviousIds: this.prevTweetedIds})
+                return stats;
+
             }
-        }
-      }
-    );
+      })
+      .catch(console.error);
+
+    return stats;
+
   };
 
-  private addToPreviouslyTweetedIds(tweetIds: string[]){
-    if(this.prevTweetedIds.length + tweetIds.length > this.prevTweetThreshold){
-        this.resetPreviouslyTweetedIds();
-        this.prevTweetedIds.concat(tweetIds);
-    } else {
-        this.prevTweetedIds = this.prevTweetedIds.concat(tweetIds);
-    }
-  }
-
-  private resetPreviouslyTweetedIds(){
-    this.prevTweetedIds = [];
-  }
-
-  public removePreviouslyTweeted(tweetData: TweetData[]){
-    return tweetData.filter(datum => !this.hasAlreadyBeenRetweeted(datum.id))
-  }
-
-  private hasAlreadyBeenRetweeted(tweetId: string){
-        if(this.prevTweetedIds.includes(tweetId)) return true;
-        return false;
-  }
 }
 
 const service = new MainService();
