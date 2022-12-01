@@ -1,20 +1,19 @@
 require("dotenv").config();
-const express = require("express");
-const app = express();
-const port = process.env.PORT;
+const app = require("express")();
+// const port = process.env.PORT;
 
 import MainService from "../services/MainService";
 
-app.get("api/", (req, res) => {
+app.get("/api", (req, res) => {
     res.json({
       message: "You got me"
     })
     // MainService.run();
 })
 
-app.listen(port, () => {
-  console.log("Server is ready to go")
-})
+// app.listen(port, () => {
+//   console.log("Server is ready to go")
+// })
 
 
 
