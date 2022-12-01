@@ -16,7 +16,7 @@ app.listen(port, () => {
   console.log("Server is ready to go")
 })
 
-MainService.run();
+// MainService.run();
 
 
 
