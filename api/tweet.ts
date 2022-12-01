@@ -1,8 +1,6 @@
 import MainService from "../services/MainService"
 
-export default function handler(req, res) {
-    MainService.tweet();
-    res.json({
-        success: true
-    })
+export default async function handler(req, res) {
+    const result = await MainService.tweetBatch();
+    res.json(result)
 }
