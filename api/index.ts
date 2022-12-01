@@ -15,5 +15,6 @@ app.get("/api", (req, res) => {
 //   console.log("Server is ready to go")
 // })
 
+module.exports = app;
 
 
